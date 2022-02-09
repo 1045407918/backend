@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cinema.data.records.ChargeRecordMapper">
+    <insert id="insertChargeRecord" parameterType="com.example.cinema.po.ChargeRecord"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into vip_charge_record(`time`, amount, gift, vipid, rental,balance)
+        values (#{time},#{amount},#{gift},#{vipID},#{rental},#{balance})
+    </insert>
+
+    <select id="selectChargeRecordById" resultMap="ChargeRecord">
+        select * from vip_charge_record where id=#{recordId}
+    </select>
+
+    <select id="selectAllChargeRecord" resultMap="ChargeRecord">
+        SELECT * FROM vip_charge_record
+    </select>
+    <select id="selectChargeRecordByVIPID" resultMap="ChargeRecord">
+        select * from vip_charge_record where vipId=#{VIPID}
+    </select>
+
+    <resultMap id="ChargeRecord" type="com.example.cinema.po.ChargeRecord">
+        <result column="id" property="id"></result>
+        <result column="time" property="time"></result>
+        <result column="amount" property="amount"></result>
+        <result column="gift" property="gift"></result>
+        <result column="vipId" property="vipID"></result>
+        <result column="rental" property="rental"></result>
+        <result column="balance" property="balance"></result>
+    </resultMap>
+</mapper>

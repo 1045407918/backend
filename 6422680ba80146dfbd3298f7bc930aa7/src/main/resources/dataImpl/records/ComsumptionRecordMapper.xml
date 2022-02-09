@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cinema.data.records.ComsumptionRecordMapper">
+    <insert id="insertComsumptionRecord" parameterType="com.example.cinema.po.ComsumptionRecord"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into comsumption_record(total_origin, total_result, couponID_used, userID,orderID,VIPID, `time`,ticketID)
+        values (#{total_origin},#{total_result},#{couponID_used},#{userID},#{orderID},#{VIPID},#{time},#{ticketID})
+    </insert>
+
+    <insert id="insertOrderRecord" parameterType="com.example.cinema.po.OrderRecord"
+            useGeneratedKeys="true" keyProperty="orderID">
+        insert into comsumption_order_record(create_time,payed_time,movieID,scheduleID,state,initial_amount,actual_payed_amount,payment_method,user_id)
+        values (#{create_time},#{payed_time},#{movieID},#{scheduleID},#{state},#{initial_amount},#{actual_payed_amount},#{payment_method},#{user_id})
+    </insert>
+
+    <update id="updateOrderRecord" parameterType="com.example.cinema.po.OrderRecord">
+        update comsumption_order_record set payed_time=#{payed_time},create_time=#{create_time},movieID=#{movieID},
+        scheduleID=#{scheduleID},state=#{state},initial_amount=#{initial_amount},actual_payed_amount=#{actual_payed_amount},
+        payment_method=#{payment_method},user_id=#{user_id}
+        where orderID=#{orderID}
+    </update>
+    <select id="selectOrderRecordByOrderID" resultMap="comsumption_order_record">
+        select * from comsumption_order_record where orderID=#{orderID}
+    </select>
+    <select id="getOrderRecordsByUserID" resultMap="comsumption_order_record">
+        select * from comsumption_order_record where user_id=#{userID}
+    </select>
+
+    <select id="getComsumptionRecords" resultMap="comsumption_record">
+        select * from comsumption_record
+    </select>
+
+    <select id="getComsumptionRecordsByOrderID" resultMap="comsumption_record">
+        select * from comsumption_record where orderID=#{orderID}
+    </select>
+
+    <select id="selectComsumptionRecordsByUserID" resultMap="comsumption_record">
+        select * from comsumption_record where userID=#{UserID}
+    </select>
+
+    <select id="getComsumptionRecordByTicketID" resultMap="comsumption_record">
+        select * from comsumption_record where ticketID=#{ticketID}
+    </select>
+
+    <update id="cleanExpiredOrder">
+       update comsumption_order_record SET  state =2 WHERE UNIX_TIMESTAMP(now())-UNIX_TIMESTAMP(create_time)>900 and state=0;
+    </update>
+
+
+
+    <resultMap id="comsumption_record" type="com.example.cinema.po.ComsumptionRecord">
+        <result column="id" property="id"></result>
+        <result column="total_origin" property="total_origin"></result>
+        <result column="total_result" property="total_result"></result>
+        <result column="userID" property="userID"></result>
+        <result column="orderID" property="orderID"></result>
+        <result column="couponID_used" property="couponID_used"></result>
+        <result column="VIPID" property="VIPID"></result>
+        <result column="time" property="time"></result>
+        <result column="ticketID" property="ticketID"></result>
+        <result column="bankcard_number" property="bankCardNumber"></result>
+    </resultMap>
+    <resultMap id="comsumption_order_record" type="com.example.cinema.po.OrderRecord">
+        <result column="orderID" property="orderID"></result>
+        <result column="payed_time" property="payed_time"></result>
+        <result column="create_time" property="create_time"></result>
+        <result column="movieID" property="movieID"></result>
+        <result column="scheduleID" property="scheduleID"></result>
+        <result column="state" property="state"></result>
+        <result column="initial_amount" property="initial_amount"></result>
+        <result column="actual_payed_amount" property="actual_payed_amount"></result>
+        <result column="payment_method" property="payment_method"></result>
+        <result column="user_id" property="user_id"></result>
+    </resultMap>
+</mapper>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cinema.data.promotion.VIPCardMapper">
+    <insert id="insertOneCard" parameterType="com.example.cinema.po.VIPCard"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into vip_card(user_id,balance)
+        values(#{userId}, #{balance})
+    </insert>
+
+    <select id="selectCardById" resultMap="VIPCard">
+        select * from vip_card where id=#{id}
+    </select>
+
+    <select id="selectAllVip" resultMap="VIPCard">
+        select * from vip_card
+    </select>
+
+    <select id="selectCardByUserId" resultMap="VIPCard">
+        select * from vip_card where user_id=#{userId}
+    </select>
+
+    <resultMap id="VIPCard" type="com.example.cinema.po.VIPCard">
+        <result column="join_time" property="joinDate"></result>
+        <result column="id" property="id"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="balance" property="balance"></result>
+    </resultMap>
+
+    <update id="updateCardBalance" >
+        update vip_card set balance = #{balance} where id=#{id}
+    </update>
+
+    <insert id="insertDiscountStrategy"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into vip_discount_strategy(quota,gift)
+        values (#{quota},#{gift})
+    </insert>
+
+    <delete id="deleteDiscountStrategy">
+        delete from vip_discount_strategy where id=#{StrategyId}
+    </delete>
+    
+    <select id="selectDiscountStrategyById" resultMap="VIPDiscountStrategy">
+        select * from vip_discount_strategy where id=#{StrategyId}
+    </select>
+
+    <select id="selectDiscountStrategyByQuota" resultMap="VIPDiscountStrategy">
+        select * from vip_discount_strategy where quota=#{quota}
+    </select>
+    
+    <select id="selectAllDiscountStrategy" resultMap="VIPDiscountStrategy">
+        select * from vip_discount_strategy
+    </select>
+
+    <select id="selectSuitableDiscountStrategy" resultMap="VIPDiscountStrategy">
+        select * from vip_discount_strategy where quota&lt;=#{amount} order by quota  desc limit 1
+    </select>
+
+    <update id="updateDiscountStrategy">
+        update vip_discount_strategy set quota=#{quota},gift=#{gift}
+        where id=#{id}
+    </update>
+
+
+    <resultMap id="VIPDiscountStrategy" type="com.example.cinema.po.VIPDiscountStrategy">
+        <result column="id" property="id"></result>
+        <result column="quota" property="quota"></result>
+        <result column="gift" property="gift"></result>
+    </resultMap>
+
+
+</mapper>

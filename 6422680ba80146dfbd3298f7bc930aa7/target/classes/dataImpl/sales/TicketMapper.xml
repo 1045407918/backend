@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cinema.data.sales.TicketMapper">
+    <insert id="insertTicket" parameterType="com.example.cinema.po.Ticket"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into ticket(user_id,schedule_id,column_index,row_index,state,can_refund,order_id)
+        values(#{userId}, #{scheduleId},#{columnIndex},#{rowIndex},#{state},#{canRefund},#{order_id})
+    </insert>
+    <insert id="insertTickets" parameterType="java.util.List"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into `ticket`(`user_id`,`schedule_id`,`column_index`,`row_index`,`state`,`can_refund`,`order_id`)
+        values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+
+            values(#{item.userId}, #{item.scheduleId},#{item.columnIndex},#{item.rowIndex},#{item.state},#{item.canRefund},#{item.order_id})
+
+        </foreach>
+    </insert>
+
+    <select id="selectTicketById" resultMap="Ticket">
+        select * from ticket where id=#{id}
+    </select>
+
+    <select id="selectTicketsByOrderID" resultMap="Ticket">
+        select * from ticket where order_id=#{orderID}
+    </select>
+
+    <select id="selectTicketsBySchedule" resultMap="Ticket">
+        select * from ticket where schedule_id=#{scheduleId} and state!=2
+    </select>
+
+    <select id="selectTicketByScheduleIdAndSeat" resultMap="Ticket">
+        select * from ticket where schedule_id=#{scheduleId} and column_index=#{column} and row_index=#{row} and state!=2
+    </select>
+
+    <select id="selectTicketByUser" resultMap="Ticket">
+        select * from ticket
+        where user_id=#{userID}
+        order by ticket.time asc
+    </select>
+
+
+    <update id="updateTicketState">
+        update ticket set state = #{state} where id=#{ticketId}
+    </update>
+
+    <update id="updateTicketCanRefund">
+        update ticket set can_refund = #{canRefund} where id=#{ticketId}
+    </update>
+
+    <delete id="deleteTicket">
+        delete from ticket where id=#{ticketId}
+    </delete>
+
+    <update id="cleanExpiredTicket">
+       update ticket SET  state =2 WHERE UNIX_TIMESTAMP(now())-UNIX_TIMESTAMP(time)>900 and state=0;
+    </update>
+
+    <resultMap id="Ticket" type="com.example.cinema.po.Ticket">
+        <result column="schedule_id" property="scheduleId"></result>
+        <result column="id" property="id"></result>
+        <result column="user_id" property="userId"></result>
+        <result column="column_index" property="columnIndex"></result>
+        <result column="row_index" property="rowIndex"></result>
+        <result column="state" property="state"></result>
+        <result column="time" property="time"></result>
+        <result column="can_refund" property="canRefund"></result>
+        <result column="order_id" property="order_id"></result>
+    </resultMap>
+
+    <delete id="deleteRefundStrategy">
+        delete from refund_strategy where id=#{id}
+    </delete>
+
+    <insert id="insertRefundStrategy" parameterType="com.example.cinema.po.RefundStrategy"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into refund_strategy(`time`,inUse)
+        values(#{time},#{inUse})
+    </insert>
+
+    <update id="updateRefundStrategy">
+        update refund_strategy set `time` = #{time}, inUse=#{inUse} where id=#{id}
+    </update>
+
+    <update id="updateRefundStrategyByInUse">
+        update refund_strategy set inUse=#{inUse} where inUse!=#{inUse}
+    </update>
+
+
+    <select id="getRefundStrategy" resultMap="RefundStrategy">
+        select * from refund_strategy where inUse=#{inUse}
+    </select>
+
+    <select id="getRefundStrategyById" resultMap="RefundStrategy">
+        select * from refund_strategy where id=#{id}
+    </select>
+
+    <select id="selectAllRefundStrategy" resultMap="RefundStrategy">
+        select * from refund_strategy
+    </select>
+
+    <resultMap id="RefundStrategy" type="com.example.cinema.po.RefundStrategy">
+        <result column="id" property="id"></result>
+        <result column="time" property="time"></result>
+        <result column="inUse" property="inUse"></result>
+    </resultMap>
+
+</mapper>
